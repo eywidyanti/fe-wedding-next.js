@@ -24,10 +24,33 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 
 export default function Page() {
+  type User = {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    gender: string;
+  };
+
+  const currentUser: User = {
+    id: 1,
+    name: "Kim Jong Un",
+    email: "jong@mail.com",
+    phone: "08675673",
+    gender: "Laki-laki",
+  };
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleEdit = () => {
+    setSelectedUser(currentUser);
+    setIsEditModalOpen(true);
   };
 
   return (
@@ -79,9 +102,19 @@ export default function Page() {
               <h2 className="text-amber-700 font-semibold text-base mb-2 mt-2">
                 Profil Pengguna
               </h2>
-              <button className="text-gray-600 hover:text-gray-800">
+              {/* <button className="text-gray-600 hover:text-gray-800">
                 <Pencil className="w-4 h-4" />
-              </button>
+              </button> */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-yellow-600 hover:bg-yellow-100 dark:text-yellow-400 dark:hover:bg-yellow-900 transition-colors"
+                onClick={handleEdit}
+                title="Edit"
+              >
+                <Pencil className="h-4 w-4" />
+                <span className="sr-only">Edit</span>
+              </Button>
             </div>
 
             <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -154,6 +187,34 @@ export default function Page() {
           </div>
         </div>
       </SidebarInset>
+
+      {isEditModalOpen && selectedUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-lg font-semibold mb-4">Edit Profil</h2>
+            <form>
+              <label className="block mb-2">
+                Nama:
+                <input
+                  type="text"
+                  defaultValue={selectedUser.name}
+                  className="border p-2 w-full rounded"
+                />
+              </label>
+              {/* Tambahkan field lain sesuai kebutuhan */}
+              <div className="flex justify-end mt-4 gap-2">
+                <Button
+                  variant="secondary"
+                  onClick={() => setIsEditModalOpen(false)}
+                >
+                  Batal
+                </Button>
+                <Button>Simpan</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </SidebarProvider>
   );
 }

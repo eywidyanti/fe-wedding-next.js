@@ -75,7 +75,7 @@ export default function LandingPage() {
             <Link
               href="/"
               className={`text-2xl font-playfair-display font-bold ${
-                isScrolled ? "text-gray-800" : "text-white"
+                isScrolled ? "text-gray-800" : "text-black"
               } hover:text-amber-600 transition-colors`}
             >
               Littlemee Decoration
@@ -110,7 +110,7 @@ export default function LandingPage() {
             </Link>
             
             <Link
-              href="/user/keranjang" 
+              href="/keranjang" 
               className={`relative ${
                 isScrolled ? "text-gray-600" : "text-white"
               } hover:text-amber-600 transition-colors`}
@@ -262,46 +262,7 @@ export default function LandingPage() {
         )}
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative h-[88vh] flex items-center justify-center text-center text-white overflow-hidden">
-        <Image
-          src="/img/bg.png" 
-          alt="Background Pernikahan Indah"
-          layout="fill"
-          objectFit="cover"
-          quality={90}
-          priority
-          className="absolute inset-0 z-0 brightness-[.5]"
-        />
-        <div className="relative z-30 p-4 max-w-5xl mx-auto">
-          <h1 className="text-4xl md:text-7xl font-playfair-display font-extrabold leading-tight mb-4 drop-shadow-xl animate-fade-in-up">
-            Ciptakan Pernikahan Impian Anda
-          </h1>
-          <p className="text-lg md:text-xl font-light mb-8 drop-shadow-md animate-fade-in-up delay-200">
-            Kami mengubah setiap detail menjadi kenangan indah yang abadi.
-          </p>
-          <Link
-            href="#dekorasi"
-            className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-10 rounded-full shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in-up delay-400"
-          >
-            Pesan Sekarang
-          </Link>
-        </div>
-        {/* SVG Wave Effect */}
-        <div className="absolute bottom-[-100px] left-0 w-full z-20">
-          <svg
-            className="block"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1440 320"
-          >
-            <path
-              fill="#fafaf9"
-              fillOpacity="1"
-              d="M0,200L48,195C96,190,192,180,288,185C384,190,480,205,576,200C672,195,768,180,864,175C960,170,1056,175,1152,180C1248,185,1344,190,1392,195L1440,200L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            ></path>
-          </svg>
-        </div>
-      </section>
+      
 
       {/* Bagian Paket Dekorasi */}
       <section id="dekorasi" ref={dekorasiRef} className="py-24 bg-white">

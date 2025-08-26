@@ -1,7 +1,8 @@
-// file: components/app-sidebar.tsx
+// components/app-sidebar.tsx
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation"; // Import usePathname
 import {
   GalleryVerticalEnd,
   LayoutDashboard,
@@ -40,20 +41,19 @@ const data = {
       title: "Dashboard",
       url: "/admin/dashboard",
       icon: LayoutDashboard,
-      isActive: true,
+      // isActive tidak lagi statis di sini, akan ditentukan secara dinamis
       items: [],
       hideArrow: true,
     },
     {
       title: "Kelola Data",
-      url: "#",
+      url: "#", // url untuk induk tetap '#'
       icon: Settings2,
-      isActive: false,
       items: [
-        { title: "Pengguna", url: "#" },
-        { title: "Paket Dekorasi", url: "#" },
-        { title: "Kostum Dekorasi", url: "#" },
-        { title: "Galeri", url: "#" },
+        { title: "Pengguna", url: "/admin/pengguna" }, // Sesuaikan URL dengan halaman pengguna yang benar
+        { title: "Paket Dekorasi", url: "/admin/paket" },
+        { title: "Kustom Dekorasi", url: "/admin/kustom" },
+        { title: "Galeri", url: "/admin/galeri" },
       ],
     },
     {
@@ -61,29 +61,57 @@ const data = {
       url: "#",
       icon: ReceiptText,
       items: [
-        { title: "Sewa Paket", url: "#" },
-        { title: "Laporan", url: "#" },
+        { title: "Sewa Paket", url: "/admin/sewa" },
+        { title: "Laporan", url: "/admin/laporan" },
       ],
     },
   ],
 };
 
 export function AppSidebar({ isSidebarOpen, ...props }: AppSidebarProps) {
+  const pathname = usePathname(); // <--- Dapatkan path saat ini
   const backgroundImage = "/img/bg.png";
 
   const [openSubmenus, setOpenSubmenus] = React.useState<{
     [key: string]: boolean;
-  }>({
-    Dashboard: true,
-    "Kelola Data": false,
-    Penyewaan: false,
-  });
+  }>({}); // Inisialisasi kosong atau dengan logika default
+
+  // Efek untuk membuka submenu secara otomatis berdasarkan URL
+  React.useEffect(() => {
+    const newOpenSubmenus: { [key: string]: boolean } = {};
+    data.navMain.forEach((mainItem) => {
+      // Periksa apakah item utama itu sendiri cocok dengan pathname
+      if (mainItem.url !== "#" && pathname.startsWith(mainItem.url)) {
+        newOpenSubmenus[mainItem.title] = true;
+      }
+      // Periksa apakah ada sub-item yang cocok
+      if (mainItem.items && mainItem.items.length > 0) {
+        const hasActiveSubItem = mainItem.items.some((subItem) =>
+          pathname.startsWith(subItem.url)
+        );
+        if (hasActiveSubItem) {
+          newOpenSubmenus[mainItem.title] = true;
+        }
+      }
+    });
+    setOpenSubmenus(newOpenSubmenus);
+  }, [pathname]); // Jalankan efek ini setiap kali pathname berubah
 
   const toggleSubmenu = (title: string) => {
     setOpenSubmenus((prev) => ({
       ...prev,
       [title]: !prev[title],
     }));
+  };
+
+  // Fungsi helper untuk memeriksa apakah sebuah URL aktif
+  const isActiveLink = (url: string) => {
+    // Menggunakan startsWith agar "/admin/pengguna" cocok dengan "/admin/pengguna/detail" juga jika ada
+    if (url === "/admin/dashboard") {
+      // Untuk dashboard, pastikan itu adalah match eksak atau hanya dimulai dengan "/admin/dashboard"
+      return pathname === url;
+    }
+    return pathname.startsWith(url);
   };
 
   return (
@@ -121,9 +149,10 @@ export function AppSidebar({ isSidebarOpen, ...props }: AppSidebarProps) {
                 {item.items && item.items.length > 0 ? (
                   <button
                     onClick={() => toggleSubmenu(item.title)}
+                    // Kelas aktif untuk menu utama yang memiliki submenu
                     className={`flex items-center justify-between w-full p-2 rounded-md transition-colors ${
-                      openSubmenus[item.title]
-                        ? "bg-white/10"
+                      openSubmenus[item.title] || item.items.some(subItem => isActiveLink(subItem.url))
+                        ? "bg-white/10" // Aktif jika submenu terbuka atau ada sub-item aktif
                         : "hover:bg-white/10"
                     }`}
                   >
@@ -147,7 +176,9 @@ export function AppSidebar({ isSidebarOpen, ...props }: AppSidebarProps) {
                   <a
                     href={item.url}
                     className={`flex items-center gap-2 p-2 rounded-md transition-colors ${
-                      item.isActive ? "bg-white/10" : "hover:bg-white/10"
+                      isActiveLink(item.url) // <-- Menggunakan fungsi isActiveLink
+                        ? "bg-white/10"
+                        : "hover:bg-white/10"
                     }`}
                   >
                     {item.icon && <item.icon className="h-5 w-5 text-white" />}
@@ -165,7 +196,11 @@ export function AppSidebar({ isSidebarOpen, ...props }: AppSidebarProps) {
                         <a
                           key={subItem.title}
                           href={subItem.url}
-                          className="flex items-center gap-2 p-2 rounded-md text-white transition-colors hover:bg-white/10"
+                          className={`flex items-center gap-2 p-2 rounded-md text-white transition-colors ${
+                            isActiveLink(subItem.url) // <-- Menggunakan fungsi isActiveLink
+                              ? "bg-white/10"
+                              : "hover:bg-white/10"
+                          }`}
                         >
                           <span>{subItem.title}</span>
                         </a>
